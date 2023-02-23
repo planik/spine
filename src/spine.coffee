@@ -1,5 +1,6 @@
 ###
 Spine.js MVC library
+chrigu, planik: 12. Dezember 2016: Habe die changeID verändert.
 Released under the MIT License
 ###
 
@@ -361,13 +362,14 @@ class Model extends Module
     @load(atts)
     @save(options)
 
-  changeID: (id) ->
+# chrigu, planik: 12. Dezember 2016: Habe die changeID verändert.
+  changeID: (id, options) ->
     return if id is @id
     records = @constructor.irecords
     records[id] = records[@id]
     delete records[@id] unless @cid is @id
     @id = id
-    #@save()
+    @save(options) # War auskommentiert, habe ich (Chrigu) wieder aktiviert, da sonst die ID nicht persistent ist. Siehe https://github.com/spine/spine/issues/611
 
   remove: (options = {}) ->
     # Remove record from model
