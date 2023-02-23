@@ -28,10 +28,26 @@ Ajax =
   generateURL: (object, args...) ->
     collection = Ajax.getCollection(object) or Ajax.getCollection(object.constructor)
     scope = Ajax.getScope(object) or Ajax.getScope(object.constructor)
-    args.unshift(collection)
+
+    # die "collection" (url) mit url Parameter wie '/pflegehotel-st-johann/pflege/dienste?portal_identifier=MITARBEITERPORTAL'
+    # muss gesplittet werden, wenn ein Argument (id) vorhanden ist.
+    # Also für dienst mit ID = 2 muss also der Teil mit den Parameter von der collection getrennt werden und so zur args hinzugefügt werden:
+    # args = [path, id, url_params]
+    if args.length
+      path_and_url_params = collection.split("?")
+      if path_and_url_params.length == 2
+#console.log "generateURL.split..."
+        args.unshift(path_and_url_params[0]) # an erste Stelle der args
+        args.push("?"+path_and_url_params[1]) # an letzte Stelle der args
+      else
+        args.unshift(collection)
+    else
+      args.unshift(collection)
     args.unshift(scope)
     # construct and clean url
     path = args.join('/')
+    # Hier das "/?" zu "?" reduzieren
+    path = path.replace /(\/\?)/g, "?"
     path = path.replace /(\/\/)/g, "/"
     path = path.replace /^\/|\/$/g, ""
     # handle relative urls vs those that use a host
